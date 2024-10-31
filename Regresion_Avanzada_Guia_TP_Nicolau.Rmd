@@ -61,8 +61,12 @@ head(grasacerdos)
 -   **(a) Dibujar el diagrama de dispersión e interpretarlo.**
 
 ```{r, echo=TRUE}
+# Calculo recta de regresión entre PV y EGD
+lm_grasacerdos <- lm(EGD ~ PV, data = grasacerdos)
 # Diagrama de dispersión
+# con recta de regresión en color rojo
 ggplot(grasacerdos, aes(x = PV, y = EGD)) +
+  geom_smooth(method = "lm", color = "red") +
   geom_point() +
   labs(title = "Diagrama de Dispersión",
        x = "Peso Vivo (PV en Kg))",
@@ -160,10 +164,8 @@ anscombe <- as.data.frame(lapply(anscombe, function(x) as.numeric(gsub(",", ".",
 -   **(a) Graficar los cuatro pares de datos en un diagrama de dispersión cada uno.**
 
 ```{r, echo=TRUE}
-
 # Calculo recta de regresión para x1, y1
 lm1 <- lm(y1 ~ x1, data = anscombe)
-summary(lm1)
 
 # Diagramas de dispersión para x1, y1
 # con recta de regresión en color rojo
@@ -181,8 +183,13 @@ ggplot(anscombe, aes(x = x1, y = y1)) +
 ```
 
 ```{r, echo=TRUE}
+# Calculo recta de regresión para x2, y2
+lm2 <- lm(y2 ~ x2, data = anscombe)
+
 # Diagramas de dispersión para x2, y2
+# con recta de regresión en color rojo
 ggplot(anscombe, aes(x = x2, y = y2)) +
+  geom_smooth(method = "lm", color = "red") +
   geom_point() +
   labs(title = "Conjunto 2: Diagrama de Dispersión para x2, y2",
        subtitle = "Distribución cuadrática",
@@ -192,11 +199,17 @@ ggplot(anscombe, aes(x = x2, y = y2)) +
   theme(
     axis.line = element_line(size = 0.5)  # Keep axis lines
   )
+
 ```
 
 ```{r, echo=TRUE}
+# Calculo recta de regresión para x3, y3
+lm3 <- lm(y3 ~ x3, data = anscombe)
+
 # Diagramas de dispersión para x3, y3
+# con recta de regresión en color rojo
 ggplot(anscombe, aes(x = x3, y = y3)) +
+  geom_smooth(method = "lm", color = "red") +
   geom_point() +
   labs(title = "Conjunto 3: Diagrama de Dispersión para x3, y3",
        subtitle = "Distribución lineal con un punto atípico",
@@ -209,11 +222,16 @@ ggplot(anscombe, aes(x = x3, y = y3)) +
 ```
 
 ```{r, echo=TRUE}
+# Calculo recta de regresión para x4, y4
+lm4 <- lm(y4 ~ x4, data = anscombe)
+
 # Diagramas de dispersión para x4, y4
+# con recta de regresión en color rojo
 ggplot(anscombe, aes(x = x4, y = y4)) +
+  geom_smooth(method = "lm", color = "red") +
   geom_point() +
   labs(title = "Conjunto 4: Diagrama de Dispersión para x4, y4",
-       subtitle = "Un valor X constante en su mayoría, y un valor Y atípico",
+       subtitle = "Relación constante en x4 y valor atípico en y4",
        x = "x4",
        y = "y4") +
   theme_minimal() +
