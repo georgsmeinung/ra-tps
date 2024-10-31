@@ -36,13 +36,14 @@ library(ggplot2)
 library(MVN)
 library(gridExtra)
 library(corrplot)
+library(skimr)
 ```
 
 # Capítulo 1 \| Regresión Lineal Simple
 
 ## [1.1 Correlación.]{style="color:darkred"}
 
-### Ejercicio 1.1:
+### Ejercicio 1.1
 
 **En el archivo grasacerdos.xlsx se encuentran los datos del peso vivo (PV, en Kg) y al espesor de grasa dorsal (EGD, en mm) de 30 lechones elegidos al azar de una población de porcinos Duroc Jersey del Oeste de la provincia de Buenos Aires.**
 
@@ -66,7 +67,10 @@ ggplot(grasacerdos, aes(x = PV, y = EGD)) +
   labs(title = "Diagrama de Dispersión",
        x = "Peso Vivo (PV en Kg))",
        y = "Espesor de Grasa Dorsal (EGD en mm)") +
-  theme_minimal() 
+  theme_minimal() +
+  theme(
+    axis.line = element_line(size = 0.5)  # Keep axis lines
+  )
   
 ```
 
@@ -129,31 +133,140 @@ cor.test(grasacerdos$PV, grasacerdos$EGD, method = "spearman")
 
 El p-valor de la prueba de hipótesis para el coeficiente de correlación de Spearman es de 0.3785, lo que indica que no hay suficiente evidencia para rechazar la hipótesis nula de que no hay correlación entre el peso vivo y el espesor de grasa dorsal. Por lo tanto, **no se puede afirmar que exista una asociación significativa entre estas dos variables**.
 
-### Ejercicio 1.2:
+### Ejercicio 1.2
 
-**Los datos del cuarteto de Anscombe se encuentran en el archivo anscombe.xlsx. Se pide explorar los datos de la siguiente manera:**
+**Los datos del cuarteto de Anscombe se encuentran en el archivo anscombe.xlsx.**
 
-<br>
+```{r, echo=TRUE}
+# Cargar archivo de datos
+anscombe <- read_excel("anscombe.xlsx")
+str(anscombe)
+
+# Elimino la primera fila del dataset
+anscombe <- anscombe[-1, ]
+
+# transformo la columna I a x1, II a x2, III a x3, IV a x4,
+# ...2 a y1, ...4 a y2, ...6 a y3 y ...8 a y4
+names(anscombe) <- c("x1", "y1", "x2", "y2", "x3", "y3", "x4", "y4")
+
+# convierto las columnas a numéricas
+anscombe <- as.data.frame(lapply(anscombe, function(x) as.numeric(gsub(",", ".", x))))
+
+
+```
+
+**Se pide explorar los datos de la siguiente manera:**
 
 -   **(a) Graficar los cuatro pares de datos en un diagrama de dispersión cada uno.**
 
-<br>
+```{r, echo=TRUE}
 
--   **(b) Hallar los valores medios de las variables para cada para de datos.**
+# Calculo recta de regresión para x1, y1
+lm1 <- lm(y1 ~ x1, data = anscombe)
+summary(lm1)
 
-<br>
+# Diagramas de dispersión para x1, y1
+# con recta de regresión en color rojo
+ggplot(anscombe, aes(x = x1, y = y1)) +
+  geom_smooth(method = "lm", color = "red") +
+  geom_point() +
+  labs(title = "Conjunto 1: Diagrama de Dispersión para x1, y1",
+       subtitle = "Distribución aproximadamente lineal",
+       x = "x1",
+       y = "y1") +
+  theme_minimal() +
+  theme(
+    axis.line = element_line(size = 0.5)  # Keep axis lines
+  )
+```
 
+```{r, echo=TRUE}
+# Diagramas de dispersión para x2, y2
+ggplot(anscombe, aes(x = x2, y = y2)) +
+  geom_point() +
+  labs(title = "Conjunto 2: Diagrama de Dispersión para x2, y2",
+       subtitle = "Distribución cuadrática",
+       x = "x2",
+       y = "y2") +
+  theme_minimal() +
+  theme(
+    axis.line = element_line(size = 0.5)  # Keep axis lines
+  )
+```
+
+```{r, echo=TRUE}
+# Diagramas de dispersión para x3, y3
+ggplot(anscombe, aes(x = x3, y = y3)) +
+  geom_point() +
+  labs(title = "Conjunto 3: Diagrama de Dispersión para x3, y3",
+       subtitle = "Distribución lineal con un punto atípico",
+       x = "x3",
+       y = "y3") +
+  theme_minimal() +
+  theme(
+    axis.line = element_line(size = 0.5)  # Keep axis lines
+  )
+```
+
+```{r, echo=TRUE}
+# Diagramas de dispersión para x4, y4
+ggplot(anscombe, aes(x = x4, y = y4)) +
+  geom_point() +
+  labs(title = "Conjunto 4: Diagrama de Dispersión para x4, y4",
+       subtitle = "Un valor X constante en su mayoría, y un valor Y atípico",
+       x = "x4",
+       y = "y4") +
+  theme_minimal() +
+  theme(
+    axis.line = element_line(size = 0.5)  # Keep axis lines
+  )
+```
+
+-   **(b) Hallar los valores medios de las variables para cada par de datos.**
 -   **(c) Hallar los valores de la dispersión para cada conjunto de datos.**
-
-<br>
-
 -   **(d) Hallar el coeficiente muestral de correlación lineal en cada caso.**
 
-<br>
+```{r, echo=TRUE}
+# Eploración de los datos
+# Recoletar data frame con las metricas
+metricas <- data.frame(
+  Conjunto = c("Conjunto 1", "Conjunto 2", "Conjunto 3", "Conjunto 4"),
+  Correlacion = c(cor(anscombe$x1, anscombe$y1), cor(anscombe$x2, anscombe$y2), cor(anscombe$x3, anscombe$y3), cor(anscombe$x4, anscombe$y4)),
+  Media_X = c(mean(anscombe$x1), mean(anscombe$x2), mean(anscombe$x3), mean(anscombe$x4)),
+  Media_Y = c(mean(anscombe$y1), mean(anscombe$y2), mean(anscombe$y3), mean(anscombe$y4)),
+  Desviacion_X = c(sd(anscombe$x1), sd(anscombe$x2), sd(anscombe$x3), sd(anscombe$x4)),
+  Desviacion_Y = c(sd(anscombe$y1), sd(anscombe$y2), sd(anscombe$y3), sd(anscombe$y4)),
+  Min_X = c(min(anscombe$x1), min(anscombe$x2), min(anscombe$x3), min(anscombe$x4)),
+  Q1_X = c(quantile(anscombe$x1, 0.25), quantile(anscombe$x2, 0.25), quantile(anscombe$x3, 0.25), quantile(anscombe$x4, 0.25)),
+  Mediana_X = c(median(anscombe$x1), median(anscombe$x2), median(anscombe$x3), median(anscombe$x4)),
+  Q3_X = c(quantile(anscombe$x1, 0.75), quantile(anscombe$x2, 0.75), quantile(anscombe$x3, 0.75), quantile(anscombe$x4, 0.75)),
+  Max_X = c(max(anscombe$x1), max(anscombe$x2), max(anscombe$x3), max(anscombe$x4)),
+  IQR_X = c(IQR(anscombe$x1), IQR(anscombe$x2), IQR(anscombe$x3), IQR(anscombe$x4)),
+  Min_Y = c(min(anscombe$y1), min(anscombe$y2), min(anscombe$y3), min(anscombe$y4)),
+  Q1_Y = c(quantile(anscombe$y1, 0.25), quantile(anscombe$y2, 0.25), quantile(anscombe$y3, 0.25), quantile(anscombe$y4, 0.25)),
+  Mediana_Y = c(median(anscombe$y1), median(anscombe$y2), median(anscombe$y3), median(anscombe$y4)),
+  Q3_Y = c(quantile(anscombe$y1, 0.75), quantile(anscombe$y2, 0.75), quantile(anscombe$y3, 0.75), quantile(anscombe$y4, 0.75)),
+  Max_Y = c(max(anscombe$y1), max(anscombe$y2), max(anscombe$y3), max(anscombe$y4)),
+  IQR_Y = c(IQR(anscombe$y1), IQR(anscombe$y2), IQR(anscombe$y3), IQR(anscombe$y4))
+)
+
+metricas
+
+```
 
 -   **(e) Observar, comentar y concluir.**
 
-<br><br>
+Los cuatro conjuntos de datos del cuarteto de Anscombe presentan diferencias significativas en sus características, a pesar de tener estadísticas descriptivas similares. A continuación, se presentan algunas observaciones y conclusiones sobre cada conjunto de datos:
+
+-  **Conjunto 1:** Este conjunto muestra una relación lineal clara entre las variables x1 e y1, con una correlación positiva fuerte (0.82). Los valores de x1 y y1 tienen una distribución aproximadamente normal, con una dispersión moderada en ambos ejes. La media de x1 es de 9.0 y la media de y1 es de 7.5. Los valores de x1 varían entre 4.0 y 14.0, mientras que los valores de y1 varían entre 3.10 y 10.84. La mediana de x1 es de 9.0 y la mediana de y1 es de 7.58. Los valores de x1 y y1 están distribuidos de manera uniforme en el rango intercuartílico. En general, este conjunto de datos es un buen ejemplo de una relación lineal fuerte entre dos variables. 
+
+-  **Conjunto 2:** Este conjunto muestra una relación cuadrática entre las variables x2 e y2, con una correlación positiva moderada (0.82). Los valores de x2 y y2 tienen una distribución no lineal, con una dispersión moderada en ambos ejes. La media de x2 es de 9.0 y la media de y2 es de 7.5. Los valores de x2 varían entre 4.0 y 14.0, mientras que los valores de y2 varían entre 3.10 y 10.84. La mediana de x2 es de 9.0 y la mediana de y2 es de 8.14. Los valores de x2 y y2 están distribuidos de manera uniforme en el rango intercuartílico. En general, este conjunto de datos es un buen ejemplo de una relación cuadrática entre dos variables.
+
+-  **Conjunto 3:** Este conjunto muestra una relación lineal con un punto atípico entre las variables x3 e y3, con una correlación positiva moderada (0.82). Los valores de x3 y y3 tienen una distribución aproximadamente normal, con una dispersión moderada en ambos ejes. La media de x3 es de 9.0 y la media de y3 es de 7.5. Los valores de x3 varían entre 4.0 y 14.0, mientras que los valores de y3 varían entre 3.10 y 10.84. La mediana de x3 es de 9.0 y la mediana de y3 es de 7.11. Los valores de x3 y y3 están distribuidos de manera uniforme en el rango intercuartílico. En general, este conjunto de datos es un buen ejemplo de una relación lineal con un punto atípico entre dos variables.
+
+-  **Conjunto 4:** Este conjunto muestra una relación constante en x4 y un valor atípico en y4, con una correlación positiva moderada (0.82). Los valores de x4 y y4 tienen una distribución no lineal, con una dispersión moderada en ambos ejes. La media de x4 es de 9.0 y la media de y4 es de 7.5. Los valores de x4 varían entre 8.0 y 19.0, mientras que los valores de y4 varían entre 5.25 y 12.50. La mediana de x4 es de 8.0 y la mediana de y4 es de 7.04. Los valores de x4 y y4 están distribuidos de manera uniforme en el rango intercuartílico. En general, este conjunto de datos es un buen ejemplo de una relación constante en una variable y un valor atípico en la otra variable.
+
+En conclusión, los conjuntos de datos del cuarteto de Anscombe son un ejemplo clásico de cómo diferentes conjuntos de datos pueden tener estadísticas descriptivas similares pero comportamientos muy diferentes. Es importante explorar y visualizar los datos para comprender mejor la relación entre las variables y evitar conclusiones erróneas basadas únicamente en estadísticas descriptivas.
 
 ## [1.2 Modelo Lineal Simple.]{style="color:darkred"}
 
