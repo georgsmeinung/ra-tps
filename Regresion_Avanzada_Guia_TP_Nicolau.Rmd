@@ -12,7 +12,7 @@ output:
      code_download: true
 editor_options: 
   markdown: 
-    wrap: 80
+    wrap: none
 ---
 
 ```{r setup, include=FALSE}
@@ -44,10 +44,7 @@ library(corrplot)
 
 ### Ejercicio 1.1:
 
-**En el archivo grasacerdos.xlsx se encuentran los datos del peso vivo (PV, en
-Kg) y al espesor de grasa dorsal (EGD, en mm) de 30 lechones elegidos al azar de
-una población de porcinos Duroc Jersey del Oeste de la provincia de Buenos
-Aires.**
+**En el archivo grasacerdos.xlsx se encuentran los datos del peso vivo (PV, en Kg) y al espesor de grasa dorsal (EGD, en mm) de 30 lechones elegidos al azar de una población de porcinos Duroc Jersey del Oeste de la provincia de Buenos Aires.**
 
 ```{r, echo=TRUE}
 # Cargar archivo de datos
@@ -73,12 +70,7 @@ ggplot(grasacerdos, aes(x = PV, y = EGD)) +
   
 ```
 
-En el diagrama de dispersión, se observa la relación entre el peso vivo (PV) y
-el espesor de grasa dorsal (EGD) de los lechones. Cada punto representa un
-lechón, donde el eje x corresponde al peso vivo y el eje y al espesor de grasa
-dorsal. A simple vista, **no se aprecia una relación clara entre estas dos
-variables, ya que los puntos parecen dispersos sin seguir un patrón lineal
-evidente**.
+En el diagrama de dispersión, se observa la relación entre el peso vivo (PV) y el espesor de grasa dorsal (EGD) de los lechones. Cada punto representa un lechón, donde el eje x corresponde al peso vivo y el eje y al espesor de grasa dorsal. A simple vista, **no se aprecia una relación clara entre estas dos variables, ya que los puntos parecen dispersos sin seguir un patrón lineal evidente**.
 
 -   **(b) Calcular el coeficiente de correlación muestral y explíquelo.**
 
@@ -88,42 +80,21 @@ coef_corr <- cor(grasacerdos$PV, grasacerdos$EGD)
 print(paste("El coeficiente de correlación muestral es de", round(coef_corr, 2)))
 ```
 
-El coeficiente de correlación muestral es de 0.25, lo que indica una correlación
-positiva débil entre el peso vivo y el espesor de grasa dorsal.
+El coeficiente de correlación muestral es de 0.25, lo que indica una correlación positiva débil entre el peso vivo y el espesor de grasa dorsal.
 
--   **(c) ¿Hay suficiente evidencia para admitir asociación entre el peso y el
-    espesor de grasa? (α = 0,05). Verifique los supuestos para decidir el
-    indicador que va a utilizar.**
+-   **(c) ¿Hay suficiente evidencia para admitir asociación entre el peso y el espesor de grasa? (α = 0,05). Verifique los supuestos para decidir el indicador que va a utilizar.**
 
-Para determinar si existe suficiente evidencia para admitir una asociación entre
-PV y EGD en muestra, se puede realizar una prueba de hipótesis sobre el
-coeficiente de correlación de Pearson (𝑟) entre estas dos variables. Esta prueba
-permitirá evaluar si la correlación observada en la muestra es estadísticamente
-significativa, utilizando un nivel de significancia de α=0.05.
+Para determinar si existe suficiente evidencia para admitir una asociación entre PV y EGD en muestra, se puede realizar una prueba de hipótesis sobre el coeficiente de correlación de Pearson (𝑟) entre estas dos variables. Esta prueba permitirá evaluar si la correlación observada en la muestra es estadísticamente significativa, utilizando un nivel de significancia de α=0.05.
 
-Para utlizar el test de correlación de Pearson, se deben verificar los
-siguientes supuestos:
+Para utlizar el test de correlación de Pearson, se deben verificar los siguientes supuestos:
 
--   **Normalidad de las variables**: El coeficiente de correlación de Pearson
-    asume que ambas variables (PV y EGD) siguen una distribución normal. Esto se
-    puede verificar mediante pruebas de normalidad como el test de Shapiro-Wilk
-    o visualizando un histograma o un gráfico Q-Q de cada variable.
+-   **Normalidad de las variables**: El coeficiente de correlación de Pearson asume que ambas variables (PV y EGD) siguen una distribución normal. Esto se puede verificar mediante pruebas de normalidad como el test de Shapiro-Wilk o visualizando un histograma o un gráfico Q-Q de cada variable.
 
--   **Linealidad**: La relación entre PV y EGD debe ser aproximadamente lineal.
-    Esto se puede verificar gráficamente con un diagrama de dispersión (scatter
-    plot). Si la relación no es lineal, el coeficiente de correlación de Pearson
-    podría no ser el mejor indicador. Si no se cumple el supuesto de linealidad,
-    el coeficiente de correlación de Spearman es una alternativa adecuada. Este
-    coeficiente es una medida de asociación no paramétrica, que evalúa la
-    relación monótona entre dos variables sin asumir linealidad.
+-   **Linealidad**: La relación entre PV y EGD debe ser aproximadamente lineal. Esto se puede verificar gráficamente con un diagrama de dispersión (scatter plot). Si la relación no es lineal, el coeficiente de correlación de Pearson podría no ser el mejor indicador. Si no se cumple el supuesto de linealidad, el coeficiente de correlación de Spearman es una alternativa adecuada. Este coeficiente es una medida de asociación no paramétrica, que evalúa la relación monótona entre dos variables sin asumir linealidad.
 
--   **Independencia de las observaciones**: Las observaciones deben ser
-    independientes entre sí. Esto significa que los valores de PV y EGD de un
-    individuo no deben depender de los valores de otro individuo.
+-   **Independencia de las observaciones**: Las observaciones deben ser independientes entre sí. Esto significa que los valores de PV y EGD de un individuo no deben depender de los valores de otro individuo.
 
--   **Homocedasticidad**: La varianza del espesor de grasa dorsal (EGD) debe ser
-    aproximadamente constante a lo largo de los valores del peso vivo (PV). Esto
-    también se puede verificar en el gráfico de dispersión.
+-   **Homocedasticidad**: La varianza del espesor de grasa dorsal (EGD) debe ser aproximadamente constante a lo largo de los valores del peso vivo (PV). Esto también se puede verificar en el gráfico de dispersión.
 
 ```{r, echo=TRUE}
 # Prueba de normalidad de las variables con el test de Shapiro-Wilk
@@ -131,10 +102,7 @@ siguientes supuestos:
 shapiro.test(grasacerdos$PV)
 ```
 
-El test de Shapiro-Wilk para la variable PV arroja un p-valor de 0.6925, lo que
-indica que no hay suficiente evidencia para rechazar la hipótesis nula de
-normalidad. Por lo tanto, **se puede asumir que la variable PV sigue una
-distribución normal**.
+El test de Shapiro-Wilk para la variable PV arroja un p-valor de 0.6925, lo que indica que no hay suficiente evidencia para rechazar la hipótesis nula de normalidad. Por lo tanto, **se puede asumir que la variable PV sigue una distribución normal**.
 
 ```{r, echo=TRUE}
 # Prueba de normalidad de las variables con el test de Shapiro-Wilk
@@ -142,16 +110,9 @@ distribución normal**.
 shapiro.test(grasacerdos$EGD)
 ```
 
-El test de Shapiro-Wilk para la variable EGD arroja un p-valor de 0.9395, lo que
-indica que no hay suficiente evidencia para rechazar la hipótesis nula de
-normalidad. Por lo tanto, **se puede asumir que la variable EGD sigue una
-distribución normal**.
+El test de Shapiro-Wilk para la variable EGD arroja un p-valor de 0.9395, lo que indica que no hay suficiente evidencia para rechazar la hipótesis nula de normalidad. Por lo tanto, **se puede asumir que la variable EGD sigue una distribución normal**.
 
-Cumplido el supuesto de normalidad, se revisa el supuesto de linealidad mediante
-el gráfico de dispersión generado anteriormente. El grafico no muestra una
-relación lineal clara entre las variables PV y EGD, por lo que se podría
-considerar utilizar el coeficiente de correlación de Spearman en lugar del
-coeficiente de correlación de Pearson.
+Cumplido el supuesto de normalidad, se revisa el supuesto de linealidad mediante el gráfico de dispersión generado anteriormente. El grafico no muestra una relación lineal clara entre las variables PV y EGD, por lo que se podría considerar utilizar el coeficiente de correlación de Spearman en lugar del coeficiente de correlación de Pearson.
 
 ```{r, echo=TRUE}
 # Coeficiente de correlación de Spearman
@@ -159,26 +120,18 @@ coef_corr_spearman <- cor(grasacerdos$PV, grasacerdos$EGD, method = "spearman")
 print(paste("El coeficiente de correlación de Spearman es de", round(coef_corr_spearman, 2)))
 ```
 
-El coeficiente de correlación de Spearman es de 0.17, lo que indica una
-correlación positiva débil entre el peso vivo y el espesor de grasa dorsal. Para
-determinar si esta correlación es estadísticamente significativa, es necesario
-realizar una prueba de hipótesis para el coeficiente de Spearman.
+El coeficiente de correlación de Spearman es de 0.17, lo que indica una correlación positiva débil entre el peso vivo y el espesor de grasa dorsal. Para determinar si esta correlación es estadísticamente significativa, es necesario realizar una prueba de hipótesis para el coeficiente de Spearman.
 
 ```{r, echo=TRUE}
 # Prueba de hipótesis para el coeficiente de correlación de Spearman
 cor.test(grasacerdos$PV, grasacerdos$EGD, method = "spearman")
 ```
 
-El p-valor de la prueba de hipótesis para el coeficiente de correlación de
-Spearman es de 0.3785, lo que indica que no hay suficiente evidencia para
-rechazar la hipótesis nula de que no hay correlación entre el peso vivo y el
-espesor de grasa dorsal. Por lo tanto, **no se puede afirmar que exista una
-asociación significativa entre estas dos variables**.
+El p-valor de la prueba de hipótesis para el coeficiente de correlación de Spearman es de 0.3785, lo que indica que no hay suficiente evidencia para rechazar la hipótesis nula de que no hay correlación entre el peso vivo y el espesor de grasa dorsal. Por lo tanto, **no se puede afirmar que exista una asociación significativa entre estas dos variables**.
 
 ### Ejercicio 1.2:
 
-**Los datos del cuarteto de Anscombe se encuentran en el archivo anscombe.xlsx.
-Se pide explorar los datos de la siguiente manera:**
+**Los datos del cuarteto de Anscombe se encuentran en el archivo anscombe.xlsx. Se pide explorar los datos de la siguiente manera:**
 
 <br>
 
@@ -208,37 +161,27 @@ Se pide explorar los datos de la siguiente manera:**
 
 ### Ejercicio 1.3:
 
-**El archivo peso_edad_colest.xlsx disponible en contiene registros
-correspondientes a 25 individuos respecto de su peso, su edad y el nivel de
-colesterol total en sangre.**
+**El archivo peso_edad_colest.xlsx disponible en contiene registros correspondientes a 25 individuos respecto de su peso, su edad y el nivel de colesterol total en sangre.**
 
 **Se pide:**
 
--   **(a) Realizar el diagrama de dispersión de colesterol en función de la edad
-    y de colesterol en función de peso. Le parece adecuado ajustar un modelo
-    lineal para alguno de estos dos pares de variables?**
+-   **(a) Realizar el diagrama de dispersión de colesterol en función de la edad y de colesterol en función de peso. Le parece adecuado ajustar un modelo lineal para alguno de estos dos pares de variables?**
 
 <br>
 
--   **(b) Estime los coeficientes del modelo lineal para el colesterol en
-    función de la edad.**
+-   **(b) Estime los coeficientes del modelo lineal para el colesterol en función de la edad.**
 
 <br>
 
--   **(c) Estime intervalos de confianza del 95% para los coeficientes del
-    modelo y compare estos resultados con el test de Wald para los coeficientes.
-    Le parece que hay asociación entre estos test y el test de la regresión?**
+-   **(c) Estime intervalos de confianza del 95% para los coeficientes del modelo y compare estos resultados con el test de Wald para los coeficientes. Le parece que hay asociación entre estos test y el test de la regresión?**
 
 <br>
 
--   **(d) A partir de esta recta estime los valores de**
-    $E(Y)\;\text{para}\;\ x=25\;\text{años y}\;x=48\;\text{años}\;$ **¿Podría
-    estimarse el valor de** $E(Y)\;\text{para}\;\ x=80\;\text{años}$
+-   **(d) A partir de esta recta estime los valores de** $E(Y)\;\text{para}\;\ x=25\;\text{años y}\;x=48\;\text{años}\;$ **¿Podría estimarse el valor de** $E(Y)\;\text{para}\;\ x=80\;\text{años}$
 
 <br>
 
--   **(e) Testee la normalidad de los residuos y haga un gráfico para ver si son
-    homocedásticos.**
+-   **(e) Testee la normalidad de los residuos y haga un gráfico para ver si son homocedásticos.**
 
 <br><br>
 
@@ -248,32 +191,23 @@ colesterol total en sangre.**
 
 ### Ejercicio 1.4
 
-**Una empresa desarrolló un sistema de energía solar para calentar el agua para
-una caldera que es parte del sistema de energía del proceso productivo. Existe
-el interés de controlar la estabilidad del sistema, para ello se monitorea el
-mismo y se registran los datos cada hora. Los datos se encuentran disponibles en
-el archivo energia.xlsx**
+**Una empresa desarrolló un sistema de energía solar para calentar el agua para una caldera que es parte del sistema de energía del proceso productivo. Existe el interés de controlar la estabilidad del sistema, para ello se monitorea el mismo y se registran los datos cada hora. Los datos se encuentran disponibles en el archivo energia.xlsx**
 
 <br>
 
--   **(a) Realizar el diagrama de dispersión y evaluar si un modelo de regresión
-    lineal es adecuado.**
+-   **(a) Realizar el diagrama de dispersión y evaluar si un modelo de regresión lineal es adecuado.**
 
 <br>
 
--   **(b) Estimar un modelo lineal y verificar la normalidad de los residuos del
-    mismo.**
+-   **(b) Estimar un modelo lineal y verificar la normalidad de los residuos del mismo.**
 
 <br>
 
--   **(c) En caso de rechazar este supuesto buscar una transformación lineal
-    para este modelo y aplicarla.**
+-   **(c) En caso de rechazar este supuesto buscar una transformación lineal para este modelo y aplicarla.**
 
 <br>
 
--   **(d) Realizar el análisis diagnóstico del nuevo modelo y estimar un
-    intervalo de confianza y un intervalo de predicción para 27.5 hs con ambos
-    modelos. Comparar los intervalos.**
+-   **(d) Realizar el análisis diagnóstico del nuevo modelo y estimar un intervalo de confianza y un intervalo de predicción para 27.5 hs con ambos modelos. Comparar los intervalos.**
 
 <br><br>
 
@@ -283,20 +217,16 @@ el archivo energia.xlsx**
 
 ### Ejercicio 1.5
 
-**Se obtuvieron datos históricos del mercado inmobiliario de una ciudad de Nueva
-Taipei, en Taiwan. La base es inmobiliaria.xlsx. Las características son:**
+**Se obtuvieron datos históricos del mercado inmobiliario de una ciudad de Nueva Taipei, en Taiwan. La base es inmobiliaria.csv. Las características son:**
 
 -   **edad:** Edad de la propiedad (en años).
--   **distancia:** La distancia a la estación de transporte más cercana (en
-    metros).
--   **negocios:** Cantidad de negocios de conveniencia en las cercanías a una
-    distancia realizable a pie.
+-   **distancia:** La distancia a la estación de transporte más cercana (en metros).
+-   **negocios:** Cantidad de negocios de conveniencia en las cercanías a una distancia realizable a pie.
 -   **latitud:** Latitud de la ubicación de la propiedad (en grados).
 -   **longitud:** Longitud de la ubicación de la propiedad (en grados).
 -   **precio:** Precio por metro cuadrado (en miles de dólares)
 
-**Se quiere investigar si el precio de las propiedades puede ser estimado en
-función de alguna de las variables disponibles.**
+**Se quiere investigar si el precio de las propiedades puede ser estimado en función de alguna de las variables disponibles.**
 
 <br>
 
@@ -308,10 +238,7 @@ función de alguna de las variables disponibles.**
 
 <br>
 
--   **(c) Estimar los coeficientes del modelo y realizar el análisis diagnóstico
-    de los residuos del mismo. Utilizar para este análisis los gráficos de
-    residuos versus valores ajustados, el qq-plot de los residuos, la grafica de
-    residuos versus leverage.**
+-   **(c) Estimar los coeficientes del modelo y realizar el análisis diagnóstico de los residuos del mismo. Utilizar para este análisis los gráficos de residuos versus valores ajustados, el qq-plot de los residuos, la grafica de residuos versus leverage.**
 
 <br>
 
@@ -319,8 +246,7 @@ función de alguna de las variables disponibles.**
 
 <br>
 
--   **(e) Analice la presencia de outlier y verifique si coinciden con los
-    puntos influyentes.**
+-   **(e) Analice la presencia de outlier y verifique si coinciden con los puntos influyentes.**
 
 <br><br>
 
@@ -330,24 +256,19 @@ función de alguna de las variables disponibles.**
 
 ### Ejercicio 1.6
 
-**En la base estudio.xlsx se encuentran registradas las horas de estudios
-referidas por un conjunto de estudiantes y su calificación en la evaluación
-final.**
+**En la base estudio.csv se encuentran registradas las horas de estudios referidas por un conjunto de estudiantes y su calificación en la evaluación final.**
 
 <br>
 
--   **(a) Ajuste un modelo de regresión simple para estimar la nota final en
-    función de las horas dedicadas al estudio.**
+-   **(a) Ajuste un modelo de regresión simple para estimar la nota final en función de las horas dedicadas al estudio.**
 
 <br>
 
--   **(b) Estudie el cumplimiento de los supuestos del modelo, gráfica y
-    analíticamente.**
+-   **(b) Estudie el cumplimiento de los supuestos del modelo, gráfica y analíticamente.**
 
 <br>
 
--   **(c) Ajuste un modelo de mínimos cuadrados ponderados definiendo los pesos
-    de tal manera que las observaciones con menor varianza tengan más peso.**
+-   **(c) Ajuste un modelo de mínimos cuadrados ponderados definiendo los pesos de tal manera que las observaciones con menor varianza tengan más peso.**
 
 <br>
 
@@ -482,8 +403,7 @@ final.**
 ### **Ejercicio 2.3:** Con la base de datos Salaries con 397 registros de 6 variables de la biblioteca carData de R.
 
 -   **rank** factor con tres niveles : AssocProf, AsstProf y Prof.
--   **discipline** factor con dos niveles A (departamentos teóricos) o B
-    (departamentos aplicados).
+-   **discipline** factor con dos niveles A (departamentos teóricos) o B (departamentos aplicados).
 -   **yrs.since.phd** años transcurridos desde el doctorado.
 -   **yrs.service** años de servicio.
 -   **sex** factor con dos niveles Femenino y Masculino.
@@ -538,24 +458,19 @@ final.**
 ### **Ejercicio 2.4:** El conjunto de datos de Boston del paquete MASS recoge la mediana del valor de la vivienda en 506 áreas residenciales de Boston. Junto con el precio (medv), se han registrado 13 variables adicionales.
 
 -   **crim:** ratio de criminalidad per cápita de cada ciudad.
--   **zn:** Proporción de zonas residenciales con edificaciones de más de 25.000
-    pies cuadrados.
+-   **zn:** Proporción de zonas residenciales con edificaciones de más de 25.000 pies cuadrados.
 -   **indus:** proporción de zona industrializada.
 -   **chas:** Si hay río en la ciudad (= 1 si hay río; 0 no hay).
 -   **nox:** Concentración de óxidos de nitrógeno (partes per 10 millón).
 -   **rm:** promedio de habitaciones por vivienda.
--   **age:** Proporción de viviendas ocupadas por el propietario construidas
-    antes de 1940.
--   **dis:** Media ponderada de la distancias a cinco centros de empleo de
-    Boston.
+-   **age:** Proporción de viviendas ocupadas por el propietario construidas antes de 1940.
+-   **dis:** Media ponderada de la distancias a cinco centros de empleo de Boston.
 -   **rad:** Índice de accesibilidad a las autopistas radiales.
 -   **tax:** Tasa de impuesto a la propiedad en unidades de \$10,000.
 -   **ptratio:** ratio de alumnos/profesor por ciudad.
--   **black:** 1000(Bk − 0,63)2 donde Bk es la proporción de gente de color por
-    ciudad.
+-   **black:** 1000(Bk − 0,63)2 donde Bk es la proporción de gente de color por ciudad.
 -   **lstat:** porcentaje de población en condición de pobreza.
--   **medv:** Valor mediano de las casas ocupadas por el dueño en unidades de
-    \$1000s.
+-   **medv:** Valor mediano de las casas ocupadas por el dueño en unidades de \$1000s.
 
 <br>
 
@@ -640,14 +555,10 @@ final.**
 
 -   **state** vector de caracteres que representa al estado.
 -   **violent** tasa de crímenes violentos por cada 100.000 habitantes.
--   **murder** variable numérica que indica la cantidad cada 100.000 habitantes
-    de asesinatos.
--   **poverty** variable numérica que indica la proporción de habitantes que
-    están por debajo del límite de pobreza.
--   **single** variable numérica que indica el porcentaje de familias que tiene
-    un único padre a cargo de la misma.
--   **metro** variable numérica que indica la proporción de familias que habitan
-    en áreas metropolitanas.
+-   **murder** variable numérica que indica la cantidad cada 100.000 habitantes de asesinatos.
+-   **poverty** variable numérica que indica la proporción de habitantes que están por debajo del límite de pobreza.
+-   **single** variable numérica que indica el porcentaje de familias que tiene un único padre a cargo de la misma.
+-   **metro** variable numérica que indica la proporción de familias que habitan en áreas metropolitanas.
 -   **white** porcentaje de población blanca.
 -   **highschool** porcentaje de habitantes graduados de la escuela sencundaria.
 
@@ -875,8 +786,7 @@ final.**
 -   **GNP** PBI
 -   **Unemployed**; número de desempleados
 -   **Armed.Forces:** cantidad de personas en fuerzas armadas.
--   **Population:** población no institucionalizada con edad igual o superior a
-    14 años.
+-   **Population:** población no institucionalizada con edad igual o superior a 14 años.
 -   **Year:** año de registro.
 -   **Employed:** número de personas en relación de dependencia.
 
@@ -1536,8 +1446,7 @@ Elija uno de los dos archivos y realice el siguiente análisis.
 -   **AGE:** edad de la madre en años.
 -   **LWT:** peso de la madre en libras en el último periodo menstrual.
 -   **RACE:** variable categórica con niveles: 1(blanca), 2(negra) y 3(otra.)
--   **SMOKE:** variable categórica con dos niveles 1(fumó durante el embarazo) y
-    0 (no).
+-   **SMOKE:** variable categórica con dos niveles 1(fumó durante el embarazo) y 0 (no).
 -   **PTL:** cantidad de episodios de trabajo de parto prematuro.
 -   **HT:** antecedentes de hipertensión 1 (si) y 0 (no).
 -   **UI:** presencia de irritabilidad uterina 1(si) y 0(no).
@@ -1639,10 +1548,8 @@ Elija uno de los dos archivos y realice el siguiente análisis.
 
 -   **volumen_pros:** volumen de la próstata estimado.
 -   **peso_pros:** peso de la próstata estimado.
--   **penetrac_capsular:** variable categórica que indica invasión de la
-    cápsula.
--   **invade_vesic_semin:** variable categórica que indica invasión de la
-    vesícula seminal.
+-   **penetrac_capsular:** variable categórica que indica invasión de la cápsula.
+-   **invade_vesic_semin:** variable categórica que indica invasión de la vesícula seminal.
 -   **gleason:** Indicador de características de agresividad de las células.
 -   **Edad:** edad del paciente.
 -   **log_psa:** Logaritmo natural del indicador de antígeno prostático.
@@ -1692,15 +1599,13 @@ Elija uno de los dos archivos y realice el siguiente análisis.
 ### **Ejercicio 5.6:** Una población de mujeres que tenían al menos 21 años de edad, descendientes de indígenas pima y que vivían cerca de Phoenix, Arizona, se sometieron a pruebas de diabetes de acuerdo con los criterios de la Organización Mundial de la Salud. Los datos fueron recopilados por el Instituto Nacional de Diabetes y Enfermedades Digestivas y Renales de EE. UU. Usamos los 532 registros completos después de descartar los datos (principalmente faltantes) sobre la insulina sérica. La base está disponible en la biblioteca Mass de R con el nombre Pima.tr. Las variables de la base son:
 
 -   **npreg** cantidad de embarazos
--   **glu** concentración de glucosa plasmática en un test de tolerancia a la
-    glucosa.
+-   **glu** concentración de glucosa plasmática en un test de tolerancia a la glucosa.
 -   **bp** presión diastólica (mm Hg).
 -   **skin** Grosor del pliegue cutáneo del tríceps (mm)
 -   **bmi** índice de masa corporal (peso en kg/ estatura en m al cuadrado )
 -   **ped** función de diabetes
 -   **age** edad en años
--   **type** variable categórica de grupo de diabetes según el criterio de la
-    OMS.
+-   **type** variable categórica de grupo de diabetes según el criterio de la OMS.
 
 <br>
 
