@@ -293,7 +293,7 @@ Los conjuntos de datos del cuarteto de Anscombe demuestran cómo diferentes conj
 
 <br>
 
-### Ejercicio 1.3:
+### Ejercicio 1.3
 
 **El archivo peso_edad_colest.xlsx disponible en contiene registros correspondientes a 25 individuos respecto de su peso, su edad y el nivel de colesterol total en sangre.**
 
