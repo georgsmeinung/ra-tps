@@ -32,11 +32,14 @@ script_path <- file.path(dirname(rstudioapi::getSourceEditorContext()$path), "")
 setwd(script_path)
 
 library(readxl)
+library(readr)
 library(ggplot2)
 library(MVN)
 library(gridExtra)
 library(corrplot)
 library(skimr)
+library(aod)
+library(lmtest)
 ```
 
 # Capítulo 1 \| Regresión Lineal Simple
@@ -276,15 +279,15 @@ metricas
 
 Los cuatro conjuntos de datos del cuarteto de Anscombe presentan diferencias significativas en sus características, a pesar de tener estadísticas descriptivas similares. A continuación, se presentan algunas observaciones y conclusiones sobre cada conjunto de datos:
 
--  **Conjunto 1:** Este conjunto muestra una relación lineal clara entre las variables x1 e y1, con una correlación positiva fuerte (0.82). Los valores de x1 y y1 tienen una distribución aproximadamente normal, con una dispersión moderada en ambos ejes. La media de x1 es de 9.0 y la media de y1 es de 7.5. Los valores de x1 varían entre 4.0 y 14.0, mientras que los valores de y1 varían entre 3.10 y 10.84. La mediana de x1 es de 9.0 y la mediana de y1 es de 7.58. Los valores de x1 y y1 están distribuidos de manera uniforme en el rango intercuartílico. En general, este conjunto de datos es un buen ejemplo de una relación lineal fuerte entre dos variables. 
+-  **Conjunto 1:** Este conjunto muestra una **relación lineal clara entre las variables x1 e y1**, con una correlación positiva (0.82). Los valores de x1 y y1 tienen una distribución aproximadamente normal, con una dispersión moderada en ambos ejes. La media de x1 es de 9.0 y la media de y1 es de 7.5. Los valores de x1 varían entre 4.0 y 14.0, mientras que los valores de y1 varían entre 3.10 y 10.84. La mediana de x1 es de 9.0 y la mediana de y1 es de 7.58. Los valores de x1 y y1 están distribuidos de manera uniforme en el rango intercuartílico. 
 
--  **Conjunto 2:** Este conjunto muestra una relación cuadrática entre las variables x2 e y2, con una correlación positiva moderada (0.82). Los valores de x2 y y2 tienen una distribución no lineal, con una dispersión moderada en ambos ejes. La media de x2 es de 9.0 y la media de y2 es de 7.5. Los valores de x2 varían entre 4.0 y 14.0, mientras que los valores de y2 varían entre 3.10 y 10.84. La mediana de x2 es de 9.0 y la mediana de y2 es de 8.14. Los valores de x2 y y2 están distribuidos de manera uniforme en el rango intercuartílico. En general, este conjunto de datos es un buen ejemplo de una relación cuadrática entre dos variables.
+-  **Conjunto 2:** Este conjunto muestra una **relación cuadrática entre las variables x2 e y2**, con una correlación positiva (0.82). Los valores de x2 y y2 tienen una distribución no lineal, con una dispersión moderada en ambos ejes. La media de x2 es de 9.0 y la media de y2 es de 7.5. Los valores de x2 varían entre 4.0 y 14.0, mientras que los valores de y2 varían entre 3.10 y 10.84. La mediana de x2 es de 9.0 y la mediana de y2 es de 8.14. Los valores de x2 y y2 están distribuidos de manera uniforme en el rango intercuartílico. 
 
--  **Conjunto 3:** Este conjunto muestra una relación lineal con un punto atípico entre las variables x3 e y3, con una correlación positiva moderada (0.82). Los valores de x3 y y3 tienen una distribución aproximadamente normal, con una dispersión moderada en ambos ejes. La media de x3 es de 9.0 y la media de y3 es de 7.5. Los valores de x3 varían entre 4.0 y 14.0, mientras que los valores de y3 varían entre 3.10 y 10.84. La mediana de x3 es de 9.0 y la mediana de y3 es de 7.11. Los valores de x3 y y3 están distribuidos de manera uniforme en el rango intercuartílico. En general, este conjunto de datos es un buen ejemplo de una relación lineal con un punto atípico entre dos variables.
+-  **Conjunto 3:** Este conjunto muestra una **relación lineal con un punto atípico entre las variables x3 e y3**, con una correlación positiva (0.82). Los valores de x3 y y3 tienen una distribución aproximadamente normal, con una dispersión moderada en ambos ejes. La media de x3 es de 9.0 y la media de y3 es de 7.5. Los valores de x3 varían entre 4.0 y 14.0, mientras que los valores de y3 varían entre 3.10 y 10.84. La mediana de x3 es de 9.0 y la mediana de y3 es de 7.11. Los valores de x3 y y3 están distribuidos de manera uniforme en el rango intercuartílico. 
 
--  **Conjunto 4:** Este conjunto muestra una relación constante en x4 y un valor atípico en y4, con una correlación positiva moderada (0.82). Los valores de x4 y y4 tienen una distribución no lineal, con una dispersión moderada en ambos ejes. La media de x4 es de 9.0 y la media de y4 es de 7.5. Los valores de x4 varían entre 8.0 y 19.0, mientras que los valores de y4 varían entre 5.25 y 12.50. La mediana de x4 es de 8.0 y la mediana de y4 es de 7.04. Los valores de x4 y y4 están distribuidos de manera uniforme en el rango intercuartílico. En general, este conjunto de datos es un buen ejemplo de una relación constante en una variable y un valor atípico en la otra variable.
+-  **Conjunto 4:** Este conjunto muestra una **relación constante en x4 y un valor atípico en y4**, con una correlación positiva (0.82). Los valores de x4 y y4 tienen una distribución no lineal, con una dispersión moderada en ambos ejes. La media de x4 es de 9.0 y la media de y4 es de 7.5. Los valores de x4 varían entre 8.0 y 19.0, mientras que los valores de y4 varían entre 5.25 y 12.50. La mediana de x4 es de 8.0 y la mediana de y4 es de 7.04. Los valores de x4 y y4 están distribuidos de manera uniforme en el rango intercuartílico. 
 
-En conclusión, los conjuntos de datos del cuarteto de Anscombe son un ejemplo clásico de cómo diferentes conjuntos de datos pueden tener estadísticas descriptivas similares pero comportamientos muy diferentes. Es importante explorar y visualizar los datos para comprender mejor la relación entre las variables y evitar conclusiones erróneas basadas únicamente en estadísticas descriptivas.
+Los conjuntos de datos del cuarteto de Anscombe demuestran cómo diferentes conjuntos de datos pueden tener estadísticas descriptivas similares pero comportamientos muy diferentes. **Es importante explorar y visualizar los datos para comprender mejor la relación entre las variables y evitar conclusiones erróneas basadas únicamente en estadísticas descriptivas.**
 
 ## [1.2 Modelo Lineal Simple.]{style="color:darkred"}
 
@@ -294,57 +297,223 @@ En conclusión, los conjuntos de datos del cuarteto de Anscombe son un ejemplo c
 
 **El archivo peso_edad_colest.xlsx disponible en contiene registros correspondientes a 25 individuos respecto de su peso, su edad y el nivel de colesterol total en sangre.**
 
+```{r, echo=TRUE}
+# Cargar archivo de datos
+peso_edad_colest <- read_excel("peso_edad_colest.xlsx")
+str(peso_edad_colest)
+```
+
 **Se pide:**
 
 -   **(a) Realizar el diagrama de dispersión de colesterol en función de la edad y de colesterol en función de peso. Le parece adecuado ajustar un modelo lineal para alguno de estos dos pares de variables?**
 
-<br>
+```{r, echo=TRUE}
+# Calculo recta de regresión entre colesterol y edad
+lm_colest_edad <- lm(colest ~ edad, data = peso_edad_colest)
+# Diagrama de dispersión colesterol vs edad
+# con recta de regresión en color rojo
+ggplot(peso_edad_colest, aes(x = edad, y = colest)) +
+  geom_smooth(method = "lm", color = "red") +
+  geom_point() +
+  labs(title = "Diagrama de Dispersión: Colesterol en función de la Edad",
+       x = "Edad",
+       y = "Colesterol Total") +
+  theme_minimal() +
+  theme(
+    axis.line = element_line(size = 0.5)  # Keep axis lines
+  )
+```
+```{r, echo=TRUE}
+# Calculo recta de regresión entre colesterol y peso
+lm_colest_peso <- lm(colest ~ peso, data = peso_edad_colest)
+# Diagrama de dispersión colesterol vs peso
+# con recta de regresión en color rojo
+ggplot(peso_edad_colest, aes(x = peso, y = colest)) +
+  geom_smooth(method = "lm", color = "red") +
+  geom_point() +
+  labs(title = "Diagrama de Dispersión: Colesterol en función del Peso",
+       x = "Peso",
+       y = "Colesterol Total") +
+  theme_minimal() +
+  theme(
+    axis.line = element_line(size = 0.5)  # Keep axis lines
+  )
+```
+A partir de lo observado en los diagramas de dispersión, se puede apreciar que **la relación entre el colesterol total y la edad parece ser más lineal que la relación entre el colesterol total y el peso**. Por lo tanto, **sería más adecuado ajustar un modelo lineal para el colesterol en función de la edad**.
 
 -   **(b) Estime los coeficientes del modelo lineal para el colesterol en función de la edad.**
 
-<br>
+```{r, echo=TRUE}
+# visualizar los coeficientes del modelo lineal entre colesterol y edad
+lm_colest_edad 
+```
 
 -   **(c) Estime intervalos de confianza del 95% para los coeficientes del modelo y compare estos resultados con el test de Wald para los coeficientes. Le parece que hay asociación entre estos test y el test de la regresión?**
 
-<br>
+```{r, echo=TRUE}
+# Intervalos de confianza para los coeficientes del modelo
+confint(lm_colest_edad)
+```
+```{r, echo=TRUE}
+# Test de Wald para los coeficientes del modelo
+wald.test(b = coef(lm_colest_edad), Sigma = vcov(lm_colest_edad), Terms = 1:2)
+```
+El est de Wald para los coeficientes del modelo muestra que ambos coeficientes son significativamente diferentes de cero, lo que indica que hay una asociación significativa entre la edad y el colesterol total en sangre. Los intervalos de confianza del 95% para los coeficientes del modelo también confirman esta asociación, ya que no incluyen el valor cero.
+
+El estadístico de Wald calcuado como:
+
+$$ W = \frac{(\hat{\beta} - \beta_0)}{SE(\hat{\beta})} $$
+Donde:
+- W es el estadístico de Wald
+- $\hat{\beta}$ es el coeficiente estimado
+- $\beta_0$ es el valor nulo
+- $SE(\hat{\beta})$ es el error estándar del coeficiente estimado
+
+y los intervalos de confianza del 95% para los coeficientes del modelo son consistentes en indicar que hay una asociación significativa entre la edad y el colesterol total en sangre.
 
 -   **(d) A partir de esta recta estime los valores de** $E(Y)\;\text{para}\;\ x=25\;\text{años y}\;x=48\;\text{años}\;$ **¿Podría estimarse el valor de** $E(Y)\;\text{para}\;\ x=80\;\text{años}$
 
-<br>
+``` {r, echo=TRUE}
+# Estimar el valor de E(Y) para x = 25 años
+x_25 <- 25
+y_25 <- predict(lm_colest_edad, newdata = data.frame(edad = x_25))
+print(paste("El valor estimado de E(Y) para x = 25 años es:", round(y_25, 2)))
+```
+
+``` {r, echo=TRUE}
+# Estimar el valor de E(Y) para x = 48 años
+x_48 <- 48
+y_48 <- predict(lm_colest_edad, newdata = data.frame(edad = x_48))
+print(paste("El valor estimado de E(Y) para x = 48 años es:", round(y_48, 2)))
+```
+
+``` {r, echo=TRUE}
+# Estimar el valor de E(Y) para x = 80 años
+x_80 <- 80
+y_80 <- predict(lm_colest_edad, newdata = data.frame(edad = x_80))
+print(paste("El valor estimado de E(Y) para x = 80 años es:", round(y_80, 2)))
+```
+Aunque el modelo lineal puede proporcionar una estimación de $E(Y)$ para edades de 25 y 48 años, **no sería apropiado estimar el valor de $E(Y)$ para una edad de 80 años**. Esto se debe a que el modelo lineal se basa en la relación observada entre la edad y el colesterol total en la muestra de datos disponible, y **extrapolar más allá de los valores observados (entre 20 y 60 años) podría llevar a predicciones inexactas y poco fiables**.
 
 -   **(e) Testee la normalidad de los residuos y haga un gráfico para ver si son homocedásticos.**
 
-<br><br>
+``` {r, echo=TRUE}
+# Test de normalidad de los residuos
+shapiro.test(residuals(lm_colest_edad))
+```
+El test de Shapiro-Wilk para los residuos del modelo arroja un p-valor de 0.5175, lo que indica que no hay suficiente evidencia para rechazar la hipótesis nula de normalidad. Por lo tanto, **se puede asumir que los residuos del modelo siguen una distribución normal**.
+``` {r, echo=TRUE}
+# Grafico de residuos vs valores ajustados
+ggplot(data.frame(residuos = residuals(lm_colest_edad), valores_ajustados = fitted(lm_colest_edad)), aes(x = valores_ajustados, y = residuos)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+  labs(title = "Gráfico de Residuos vs Valores Ajustados",
+       x = "Valores Ajustados",
+       y = "Residuos") +
+  theme_minimal() +
+  theme(
+    axis.line = element_line(size = 0.5)  # Keep axis lines
+  )
 
-## [1.3 Transformación de Variables.]{style="color:darkred"}
-
-<br>
+``` 
+El gráfico de residuos versus valores ajustados muestra que los residuos están distribuidos de manera aleatoria alrededor de la línea cero, lo que indica que los residuos son homocedásticos. Esto sugiere que el modelo lineal es adecuado para los datos y que no hay una relación sistemática entre los residuos y los valores ajustados.
 
 ### Ejercicio 1.4
 
 **Una empresa desarrolló un sistema de energía solar para calentar el agua para una caldera que es parte del sistema de energía del proceso productivo. Existe el interés de controlar la estabilidad del sistema, para ello se monitorea el mismo y se registran los datos cada hora. Los datos se encuentran disponibles en el archivo energia.xlsx**
 
-<br>
-
+```{r, echo=TRUE}
+# Cargar archivo de datos
+energia <- read_excel("energia.xlsx")
+str(energia)
+# Elimino el acento del nombre de la columna Energía
+names(energia)[2] <- "Energia"
+```
 -   **(a) Realizar el diagrama de dispersión y evaluar si un modelo de regresión lineal es adecuado.**
 
-<br>
+```{r, echo=TRUE}
+# Calculo recta de regresión entre Hora y Energía
+lm_energia <- lm(Energia ~ Hora, data = energia)
+# Diagrama de dispersión para las variables Hora y Energía
+# con recta de regresión en color rojo
+ggplot(energia, aes(x = Hora, y = Energia)) +
+  geom_smooth(method = "lm", color = "red") +
+  geom_point() +
+  labs(title = "Diagrama de Dispersión: Energía en función de la Hora",
+       x = "Hora",
+       y = "Energía") +
+  theme_minimal() +
+  theme(
+    axis.line = element_line(size = 0.5)  # Keep axis lines
+  )
+```
+En el gráfico de dispersión, se puede observar si hay una relación lineal clara entre las dos variables y si el modelo lineal se ajusta bien a los datos. En este caso, el diagrama de dispersión muestra una relación lineal entre la hora y la energía, lo que sugiere que un modelo de regresión lineal podría ser adecuado para estos datos.
 
 -   **(b) Estimar un modelo lineal y verificar la normalidad de los residuos del mismo.**
 
-<br>
+```{r, echo=TRUE}
+# Visualizar los coeficientes del modelo lineal entre Hora y Energía
+lm_energia
+```
+```{r, echo=TRUE}
+# Verificar la normalidad de los residuos
+shapiro.test(residuals(lm_energia))
+```
+El test de Shapiro-Wilk para los residuos del modelo arroja un p-valor de 0.006752, lo que indica que hay suficiente evidencia para rechazar la hipótesis nula de normalidad. Por lo tanto, **los residuos del modelo no siguen una distribución normal**.
 
 -   **(c) En caso de rechazar este supuesto buscar una transformación lineal para este modelo y aplicarla.**
 
-<br>
+```{r, echo=TRUE}
+# Transformación logarítmica de la variable Energía
+energia$log_Energia <- log(energia$Energia)
+# Ajustar un nuevo modelo lineal con la variable transformada
+lm_energia_log <- lm(log_Energia ~ Hora, data = energia)
+# Verificar la normalidad de los residuos del nuevo modelo
+shapiro.test(residuals(lm_energia_log))
+```
+El test de Shapiro-Wilk para los residuos del nuevo modelo arroja un p-valor de 0.1454, lo que indica que no hay suficiente evidencia para rechazar la hipótesis nula de normalidad. Por lo tanto, **los residuos del modelo con la variable transformada logarítmicamente siguen una distribución normal**.
 
 -   **(d) Realizar el análisis diagnóstico del nuevo modelo y estimar un intervalo de confianza y un intervalo de predicción para 27.5 hs con ambos modelos. Comparar los intervalos.**
+```{r, echo=TRUE}
+# Diagnosticar el nuevo modelo lineal con la variable transformada
+plot(lm_energia_log)
+```
+Los gráficos de diagnóstico del nuevo modelo lineal con la variable transformada logarítmicamente muestran que los residuos están distribuidos de manera aleatoria alrededor de la línea cero, lo que indica que el modelo es adecuado para los datos y que no hay una relación sistemática entre los residuos y los valores ajustados.
 
-<br><br>
+```{r, echo=TRUE}
+# Estimar el intervalo de confianza y el intervalo de predicción para 27.5 horas con el modelo original
+x_27_5 <- 27.5
+confint(lm_energia, newdata = data.frame(Hora = x_27_5))
+```
+El intervalo de confianza para la energía estimada en 27.5 horas con el modelo original es de 436.12578 a 546.852940. 
+
+```{r, echo=TRUE}
+# Estimar el intervalo de confianza y el intervalo de predicción para 27.5 horas con el modelo original
+x_27_5 <- 27.5
+predict(lm_energia, newdata = data.frame(Hora = x_27_5), interval = "prediction")
+```
+La predicción de la energía en 27.5 horas con el modelo original es de 505.8125, con un intervalo de predicción del 95% de 314.9688 a 696.6563.
+
+```{r, echo=TRUE}
+# Estimar el intervalo de confianza y el intervalo de predicción para 27.5 horas con el modelo transformado
+# Dado que el modelo transformado regresiona el logaritmo de la variable Energía 
+# es necesario aplicar la función exponencial a los límites de los intervalos.
+x_27_5 <- 27.5
+exp(confint(lm_energia_log, newdata = data.frame(Hora = x_27_5)))
+```
+El intervalo de confianza para la energía estimada en 27.5 horas con el modelo transformado es de 441.4543461 a 543.361800.
+```{r, echo=TRUE}
+# Estimar el intervalo de confianza y el intervalo de predicción para 27.5 horas con el modelo transformado
+# Dado que el modelo transformado regresiona el logaritmo de la variable Energía 
+# es necesario aplicar la función exponencial a los límites de los intervalos.
+x_27_5 <- 27.5
+exp(predict(lm_energia_log, newdata = data.frame(Hora = x_27_5), interval = "prediction"))
+```
+La predicción de la energía en 27.5 horas con el modelo transformado es de 497.3898, con un intervalo de predicción del 95% de 347.7179 a 711.4867. 
+
+Los intervalos de confianza y de predicción para la energía estimada en 27.5 horas son similares entre el modelo original y el modelo transformado. Sin embargo, el modelo transformado puede ser preferible si los residuos del modelo original no siguen una distribución normal, ya que la transformación logarítmica puede ayudar a mejorar la normalidad de los residuos y la precisión de las predicciones.
 
 ## [1.4 Tratamiento de la heterocedasticidad.]{style="color:darkred"}
-
-<br>
 
 ### Ejercicio 1.5
 
@@ -359,15 +528,95 @@ En conclusión, los conjuntos de datos del cuarteto de Anscombe son un ejemplo c
 
 **Se quiere investigar si el precio de las propiedades puede ser estimado en función de alguna de las variables disponibles.**
 
-<br>
+```{r, echo=TRUE}
+# Cargar archivo de datos
+inmobiliaria <- read_delim("inmobiliaria.csv", delim = ";",
+                           col_types = cols(edad = col_double(),
+                                            distancia = col_double(),
+                                            negocios = col_double(),
+                                            latitud = col_double(),
+                                            longitud = col_double(),
+                                            precio = col_double())
+)
+str(inmobiliaria)
+
+```
 
 -   **(a) Analizar si el precio depende de alguna de las variables.**
 
-<br>
+```{r, echo=TRUE}
+# Calculo recta de regresión entre precio y distancia
+lm_precio_distancia <- lm(precio ~ distancia, data = inmobiliaria)
+# Diagrama de dispersión precio vs distancia
+# con recta de regresión en color rojo
+ggplot(inmobiliaria, aes(x = distancia, y = precio)) +
+  geom_smooth(method = "lm", color = "red") +
+  geom_point() +
+  labs(title = "Diagrama de Dispersión: Precio en función de la Distancia",
+       x = "Distancia",
+       y = "Precio por Metro Cuadrado") +
+  theme_minimal() +
+  theme(
+    axis.line = element_line(size = 0.5)  # Keep axis lines
+  )
+```
+```{r, echo=TRUE}
+# Calculo recta de regresión entre precio y edad
+lm_precio_edad <- lm(precio ~ edad, data = inmobiliaria)
+# Diagrama de dispersión precio vs edad
+# con recta de regresión en color rojo
+ggplot(inmobiliaria, aes(x = edad, y = precio)) +
+  geom_smooth(method = "lm", color = "red") +
+  geom_point() +
+  labs(title = "Diagrama de Dispersión: Precio en función de la Edad",
+       x = "Edad",
+       y = "Precio por Metro Cuadrado") +
+  theme_minimal() +
+  theme(
+    axis.line = element_line(size = 0.5)  # Keep axis lines
+  )
+```
+```{r, echo=TRUE}
+# Calculo recta de regresión entre precio y negocios
+lm_precio_negocios <- lm(precio ~ negocios, data = inmobiliaria)
+# Diagrama de dispersión precio vs negocios
+# con recta de regresión en color rojo
+ggplot(inmobiliaria, aes(x = negocios, y = precio)) +
+  geom_smooth(method = "lm", color = "red") +
+  geom_point() +
+  labs(title = "Diagrama de Dispersión: Precio en función de la Cantidad de Negocios",
+       x = "Cantidad de Negocios",
+       y = "Precio por Metro Cuadrado") +
+  theme_minimal() +
+  theme(
+    axis.line = element_line(size = 0.5)  # Keep axis lines
+  )
+```
+```{r, echo=TRUE}
+# Calculo recta de regresión entre precio y ubicación (latitud y longitud)
+lm_precio_ubicacion <- lm(precio ~ latitud + longitud, data = inmobiliaria)
+# Diagrama de dispersión precio vs ubicación
+# diametro de los puntos proporcional al precio
+ggplot(inmobiliaria, aes(x = longitud, y = latitud, size = precio)) +
+  geom_point() +
+  labs(title = "Diagrama de Dispersión: Precio en función de la Ubicación",
+       x = "Longitud",
+       y = "Latitud") +
+  theme_minimal() +
+  theme(
+    axis.line = element_line(size = 0.5)  # Keep axis lines
+  )
+```
+La relación entre el precio de las propiedades y las variables disponibles analizadas mediante diagramas de dispersión y modelos de regresión lineal muestran que **la variable distancia parece tener una relación lineal con el precio de las propiedades**, mientras que las variables edad, cantidad de negocios y ubicación (latitud y longitud) no parecen tener una relación lineal clara con el precio.
 
 -   **(b) Estudiar la linealidad de la relación precio-distancia.**
 
-<br>
+```{r, echo=TRUE}
+# Test de Breusch-Pagan para la heterocedasticidad
+bptest(lm_precio_distancia)
+```
+El test de Breusch-Pagan para la heterocedasticidad en el modelo de regresión entre el precio y la distancia arroja un p-valor de 0.2302, lo que indica que no hay suficiente evidencia para rechazar la hipótesis nula de homocedasticidad. Por lo tanto, **se puede asumir que la relación entre el precio y la distancia es homocedástica**.
+Dado que la relación entre el precio y la distancia es homocedástica, el modelo de regresión lineal es adecuado para estos datos y puede utilizarse para predecir el precio de las propiedades en función de la distancia a la estación de transporte más cercana.
 
 -   **(c) Estimar los coeficientes del modelo y realizar el análisis diagnóstico de los residuos del mismo. Utilizar para este análisis los gráficos de residuos versus valores ajustados, el qq-plot de los residuos, la grafica de residuos versus leverage.**
 
