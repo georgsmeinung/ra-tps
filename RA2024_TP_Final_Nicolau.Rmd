@@ -28,6 +28,9 @@ El archivo resultando `train_fraud_labels.csv` servirá para la combinación de 
 
 ```{r json_to_csv_fraud_labels}
 
+# Dataset: Financial Transactions Dataset: Analytics
+# Source: https://www.kaggle.com/datasets/computingvictor/transactions-fraud-datasets 
+
 library(jsonlite)
 library(data.table)
 library(progress)
@@ -168,6 +171,8 @@ library(readr)
 transactions_data <- read_csv("sampled_transactions.csv")
 print(colnames(transactions_data))
 
+# Dataset: USA States (Generalized)
+# Source https://public-data-hub-dhhs.hub.arcgis.com/datasets/usa-states-generalized/about
 # Leer los datos de georreferencias de estados de USA
 georef_data <- read_csv("usa_states_generalized.csv", delim = ";")
 colnames(georef_data) <- paste0("st_", colnames(georef_data))
@@ -182,6 +187,8 @@ Luego, se unen los datos de códigos postales al dataset resultante.
 
 ```{r merge_zip_data}
 
+# Dataset: US Zip Codes Points- United States of America
+# Source: https://data.opendatasoft.com/explore/dataset/georef-united-states-of-america-zc-point%40public
 # Leer los datos de códigos postales
 zip_data <- read_delim("georef_usa_zc_point.csv", delim = ";")
 colnames(zip_data) <- paste0("zp_", colnames(zip_data))
