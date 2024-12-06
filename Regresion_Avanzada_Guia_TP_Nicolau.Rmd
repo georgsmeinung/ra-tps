@@ -41,6 +41,8 @@ library(skimr)
 library(aod)
 library(lmtest)
 library(car)
+library(MASS)
+
 ```
 
 # Capítulo 1 \| Regresión Lineal Simple
@@ -532,12 +534,13 @@ Los intervalos de confianza y de predicción para la energía estimada en 27.5 h
 ```{r, echo=TRUE}
 # Cargar archivo de datos
 inmobiliaria <- read_delim("inmobiliaria.csv", delim = ";",
-                           col_types = cols(edad = col_double(),
-                                            distancia = col_double(),
-                                            negocios = col_double(),
-                                            latitud = col_double(),
-                                            longitud = col_double(),
-                                            precio = col_double())
+                    col_types = cols(edad = col_double(),
+                    distancia = col_double(),
+                    negocios = col_double(),
+                    latitud = col_double(),
+                    longitud = col_double(),
+                    precio = col_double()
+                )
 )
 str(inmobiliaria)
 
@@ -647,8 +650,7 @@ El test de Durbin-Watson para la autocorrelación de los residuos en el modelo d
 ```{r, echo=TRUE}
 # Identificar los puntos influyentes en el modelo
 influential_points <- influence.measures(lm_precio_distancia)
-# Visualizar los puntos influyentes
-influential_points
+summary(influential_points)
 ```
 
 Para identificar los puntos influyentes en el modelo, se utilizó la función influence.measures() que proporciona información sobre los residuos estudentizados, los residuos de Cook y otros estadísticos de influencia. Los puntos influyentes se identifican por valores extremos en estos estadísticos, lo que indica que tienen un impacto significativo en el modelo de regresión.
@@ -656,30 +658,155 @@ Para identificar los puntos influyentes en el modelo, se utilizó la función in
 Para identificar los outliers, se pueden considerar los puntos con residuos estudentizados o residuos de Cook extremadamente altos. Estos puntos pueden tener un impacto significativo en el modelo y pueden ser considerados outliers.
 
 ```{r, echo=TRUE}
-
+plot(lm_precio_distancia, which = 4, main = "Cook's Distance")
+abline(h = 4 / nrow(dataset), col = "red", lty = 2) # Línea de referencia
 ```
+El gráfico de distancia de Cook muestra que hay varios puntos con valores extremadamente altos, lo que indica que estos puntos pueden ser considerados outliers y tener un impacto significativo en el modelo de regresión. Estos puntos pueden ser considerados como puntos influyentes y deben ser analizados en detalle para determinar si deben ser excluidos del modelo.
+
+Se destacan directamente los puntos influyentes en los gráficos utilizando etiquetas:
+
+```{r, echo=TRUE}
+# Identificar los puntos influyentes en el modelo
+library(ggplot2)
+
+# Datos para el gráfico
+influence_data <- data.frame(
+  leverage = hatvalues(lm_precio_distancia),
+  cooks_distance = cooks.distance(lm_precio_distancia),
+  residuals = rstudent(lm_precio_distancia),
+  id = rownames(inmobiliaria)
+)
+
+# Gráfico con etiquetas
+ggplot(influence_data, aes(x = leverage, y = residuals)) +
+  geom_point() +
+  geom_text(aes(label = ifelse(cooks_distance > 4 / nrow(inmobiliaria), id, "")), 
+            hjust = 1.2, color = "red") +
+  theme_minimal() +
+  labs(title = "Leverage vs. Residuals", x = "Leverage", y = "Standardized Residuals")
+```
+
 
 ## [1.5 Cuadrados Mínimos Ponderados.]{style="color:darkred"}
 
-<br>
+Se visualizar los residuos estudentizados y los residuos de Cook para identificar los puntos influyentes y los outliers en el modelo de regresión entre el precio y la distancia.
 
+-   **(f) Ajuste un modelo de regresión lineal ponderado por la distancia.**
+
+```{r, echo=TRUE}
+# Ajustar un modelo de regresión lineal ponderado por la distancia
+lm_precio_distancia_ponderado <- lm(precio ~ distancia, data = inmobiliaria, weights = 1 / distancia)
+# Visualizar los coeficientes del modelo ponderado
+lm_precio_distancia_ponderado
+```
+
+El modelo de regresión lineal ponderado por la distancia ajustado es:
+
+$$ Precio = 15.234572 -0.003441 \times \frac{1}{Distancia} $$
 ### Ejercicio 1.6
 
 **En la base estudio.csv se encuentran registradas las horas de estudios referidas por un conjunto de estudiantes y su calificación en la evaluación final.**
 
-<br>
+```{r, echo=TRUE}
+# Cargar archivo de datos
+estudio <- read_delim("estudio.csv", delim = ";",
+                    col_types = cols(horas_estudio = col_double(),
+                    puntaje = col_double()
+                )
+)
+str(estudio)
+```
 
 -   **(a) Ajuste un modelo de regresión simple para estimar la nota final en función de las horas dedicadas al estudio.**
 
-<br>
+```{r, echo=TRUE}
+# Ajustar un modelo de regresión lineal simple entre puntaje y horas de estudio
+lm_puntaje_estudio <- lm(puntaje ~ horas_estudio, data = estudio)
+# Diagrama de dispersión puntaje vs horas de estudio
+# con recta de regresión en color rojo
+ggplot(estudio, aes(x = horas_estudio, y = puntaje)) +
+  geom_smooth(method = "lm", color = "red") +
+  geom_point() +
+  labs(title = "Diagrama de Dispersión: Puntaje en función de las Horas de Estudio",
+       x = "Horas de Estudio",
+       y = "Puntaje") +
+  theme_minimal() +
+  theme(
+    axis.line = element_line(size = 0.5)  # Keep axis lines
+  )
+
+```
 
 -   **(b) Estudie el cumplimiento de los supuestos del modelo, gráfica y analíticamente.**
 
-<br>
+```{r, echo=TRUE}
+# Visualizar los coeficientes del modelo lineal entre puntaje y horas de estudio
+lm_puntaje_estudio
+```
+La relación entre el puntaje y las horas de estudio parece ser lineal, lo que sugiere que un modelo de regresión lineal simple podría ser adecuado para estos datos.
+
+```{r, echo=TRUE}
+# Test de Breusch-Pagan para la heterocedasticidad
+bptest(lm_puntaje_estudio)
+```
+
+El test de Breusch-Pagan para la heterocedasticidad en el modelo de regresión entre el puntaje y las horas de estudio arroja un p-valor de 0.02877, lo que indica que hay suficiente evidencia para rechazar la hipótesis nula de homocedasticidad. Por lo tanto, **se puede asumir que la relación entre el puntaje y las horas de estudio es heterocedástica**.
+
+```{r, echo=TRUE}
+# Test de Durbin-Watson para la autocorrelación de los residuos
+durbinWatsonTest(lm_puntaje_estudio)
+```
+
+El test de Durbin-Watson para la autocorrelación de los residuos en el modelo de regresión entre el puntaje y las horas de estudio arroja un valor de 1.826352 y un p-valor de 0.5, lo que indica que no hay suficiente evidencia para rechazar la hipótesis nula de no autocorrelación. Por lo tanto, **se puede asumir que los residuos del modelo no están autocorrelacionados**.
+
+```{r, echo=TRUE}
+# Identificar los puntos influyentes en el modelo
+influential_points <- influence.measures(lm_puntaje_estudio)
+summary(influential_points)
+```
+
+El único punto influyente en el modelo de regresión entre el puntaje y las horas de estudio es el punto 36, que tiene un alto valor de leverage y un alto valor de Cook's distance. Este punto puede tener un impacto significativo en el modelo y debe ser analizado en detalle para determinar si debe ser excluido del modelo.
+
+```{r, echo=TRUE}
+# Gráfico de residuos estudentizados vs valores ajustados
+plot(lm_puntaje_estudio, which = 1, main = "Residuals vs Fitted")
+```
+
+El gráfico de residuos estudentizados versus valores ajustados muestra que los residuos están distribuidos de manera aleatoria alrededor de la línea cero, lo que indica que el modelo es adecuado para los datos y que no hay una relación sistemática entre los residuos y los valores ajustados.
+
+```{r, echo=TRUE}
+# Gráfico de qq-plot de los residuos
+plot(lm_puntaje_estudio, which = 2, main = "Normal Q-Q")
+```
+
+El gráfico de qq-plot de los residuos muestra que los residuos siguen aproximadamente una distribución normal, lo que sugiere que el modelo es adecuado para los datos y que los residuos no se desvían significativamente de la normalidad.
+
+```{r, echo=TRUE}
+# Gráfico de residuos vs leverage
+plot(lm_puntaje_estudio, which = 5, main = "Residuals vs Leverage")
+```
+
+El gráfico de residuos versus leverage muestra que los residuos están distribuidos de manera aleatoria alrededor de la línea cero, lo que indica que el modelo es adecuado para los datos y que no hay una relación sistemática entre los residuos y el leverage.
 
 -   **(c) Ajuste un modelo de mínimos cuadrados ponderados definiendo los pesos de tal manera que las observaciones con menor varianza tengan más peso.**
 
-<br>
+```{r, echo=TRUE}
+# Calculo de la varianza de los residuos
+estudio$residuos <- residuals(lm_puntaje_estudio)
+
+# Calcular la varianza de los residuos
+estudio$var_col <- studres(lm_puntaje_estudio)^2
+
+# Definir los pesos
+estudio$weights <- 1 / estudio$var_col  # Inverso de la varianza
+
+# Ajustar el modelo WLS
+model_wls <- lm(y ~ x1 + x2, data = dataset, weights = weights)
+
+# Visualizar los coeficientes del modelo WLS
+summary(model_wls)
+```
+
 
 -   **(d) Realice el análisis diagnóstico del segundo modelo ajustado.**
 
