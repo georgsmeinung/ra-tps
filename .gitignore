@@ -8,5 +8,5 @@ train_fraud_labels.csv
 transactions_data.csv
 sampled_transactions.csv
 train_fraud_labels_test.json
-transactions_data_clean.csv
 *.py
+renv.lock
