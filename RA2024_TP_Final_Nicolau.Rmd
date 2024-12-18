@@ -47,7 +47,7 @@ La aproximación con lectura por bytes tampoco es eficiente, por lo que se decid
 
 ### Conversión de `train_fraud_labels.json` a `train_fraud_labels.csv`
 
-```{python json_to_csv_fraud_labels, eval = FALSE}
+```python
 
 # Dataset: Financial Transactions Dataset: Analytics
 # Archivo principal con informacion de 13.305.915 transacciones en 1.2 GB
@@ -232,7 +232,7 @@ print(str(merged_data))
 
 A continuación, se unen los datos de tarjetas y usuarios al dataset resultante.
 
-```{r merge_cards_users_data, eval = FALSE}
+```{r merge_cards_data, eval = FALSE}
 
 # Leer los datos de tarjetas
 cards_data <- read_csv("cards_data.csv")
@@ -249,7 +249,7 @@ print(str(merged_data))
 ```
 
 
-```{r merge_cards_users_data, eval = FALSE}
+```{r merge_users_data, eval = FALSE}
 
 # Leer los datos de usuarios
 users_data <- read_csv("users_data.csv")
@@ -265,7 +265,7 @@ merged_data <- merged_data %>%
 print(str(merged_data))
 ```
 
-```{r merge_cards_users_data, eval = FALSE}
+```{r merge_mcc_data, eval = FALSE}
 # Leer los datos de MCC
 mcc_data <- read_csv("mcc_codes.csv")
 # Agregar un prefijo a los nombres de columnas para identificar
@@ -305,7 +305,7 @@ Previsiblemente luego de comoponer el dataset de diferentes fuentes se generan c
 -   `merchant_id` y `mcc_description`: Si el identificador merchant_id está siempre asociado a una única descripción mcc_description, esta última podría inferirse y no ser necesaria. Pero se mantendrá para facilitar la interpretación.
 -   `zp_population` y `st_population\_(2017)`: Ambos representan población, pero uno es a nivel de ZCTA (ZIP Code Tabulation Areas o sea la localidad) y el otro a nivel estatal. Aunque podría ser redundante dependiendo del nivel de análisis se mantendrán ambos para permitir análisis a diferentes niveles de granularidad.
 
-```{r remove_redundant_columns, eval = FALSE}
+```{r remove_load_dataset, eval = FALSE}
 
 # Leer los datos completos de transacciones
 merged_data <- read_csv("transactions_data_complete.csv")
@@ -673,14 +673,14 @@ correlation_matrix_st
 
 ```
 
-```{r plot_correlation}
+```{r plot_correlation_matrix}
 # Generar un gráfico de la matriz de correlación
 corrplot::corrplot(correlation_matrix_st, method = "color", type = "upper", tl.cex = 0.7)
 
 ```
 
 
-```{r plot_correlation}
+```{r plot_correlation_2}
 
 # Seleccionar las columnas numéricas de los datos de transacciones y los que 
 # comienzan con st_age además de las 7 primeras columnas del dataset 
@@ -699,7 +699,7 @@ correlation_matrix_st_age <- cor(demo_data_st_age, use = "pairwise.complete.obs"
 correlation_matrix_st_age
 ```
 
-```{r plot_correlation}
+```{r plot_correlation_matrix_2}
 # Generar un gráfico de la matriz de correlación
 corrplot::corrplot(correlation_matrix_st_age, method = "color", type = "upper", tl.cex = 0.7)
 
@@ -709,7 +709,7 @@ Parece haber poca correlación entre las variables numéricas de los datos demog
 - Efectivamente las variables demográficas y financieras son independientes entre sí.
 - La falta de correlación puede deberse a la falta de información verdadera: se sabe que los datos de las transacciones son sintéticos y no se puede no reflejar hábitos que si se podrían deducir a partir de las variables demográficas. Esto es, los datos demográficos son reales y no se pueden correlacionar con datos ficticios.
 
-```{r plot_correlation}  
+```{r plot_correlation_ud}  
 library(dplyr)
 
 # Seleccionar las columnas numéricas de los datos de transacciones y los que 
@@ -729,7 +729,7 @@ correlation_matrix_ud <- cor(demo_data_ud, use = "pairwise.complete.obs")
 correlation_matrix_ud
 ```
 
-```{r plot_correlation}  
+```{r plot_correlation_matrix_ud}  
 # Generar un gráfico de la matriz de correlación
 corrplot::corrplot(correlation_matrix_ud, method = "color", type = "upper", tl.cex = 0.7)
 ```
@@ -746,7 +746,7 @@ Las variables financieras de los usuarios seleccionadas son:
 
 Con estas variables se intenta predecir el monto de la transacción (`amount`). Primeramente se intenta predecir el monto de la transacción a partir cada una de las variables financieras de los usuarios (modelos univariados) y luego se intenta predecir el monto de la transacción a partir de la commbinación de todas las variables financieras de los usuarios (modelo multivariado).
 
-```{r linear_regression_univariate}
+```{r linear_regression_univariate_income}
 
 # Seleccionar las variables financieras de los usuarios y
 # el monto de la transacción
@@ -757,7 +757,8 @@ model_income <- lm(amount ~ ud_per_capita_income, data = transactions_data)
 summary(model_income)
 
 ```
-```{r linear_regression_univariate}  
+
+```{r linear_regression_univariate_income_plot}  
 # Diagrama de dispersión
 # con recta de regresión en color rojo
 ggplot(transactions_data, aes(x = ud_per_capita_income, y = amount)) +
@@ -769,7 +770,7 @@ ggplot(transactions_data, aes(x = ud_per_capita_income, y = amount)) +
   theme_minimal()
 ```
 
-```{r linear_regression_univariate}
+```{r linear_regression_univariate_debt}
 
 # Modelo 2: Deuda total del usuario vs Monto de la transacción
 model_debt <- lm(amount ~ ud_total_debt, data = transactions_data)
@@ -778,7 +779,7 @@ summary(model_debt)
 
 ```
 
-```{r linear_regression_univariate}
+```{r linear_regression_univariate_debt_plot}
 # Diagrama de dispersión
 # con recta de regresión en color rojo
 ggplot(transactions_data, aes(x = ud_total_debt, y = amount)) +
