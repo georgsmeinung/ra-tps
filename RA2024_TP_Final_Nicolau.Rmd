@@ -450,7 +450,8 @@ ggplot(missing_values, aes(x = reorder(key, value), y = value)) +
   coord_flip() +
   labs(title = "Valores Faltantes por Columna",
        x = "Columna",
-       y = "Cantidad de Valores Faltantes")
+       y = "Cantidad de Valores Faltantes")+
+  theme_minimal()
 ```
 
 Se detectan valores faltantes en las columnas relacionadas con el estado y la ciudad del comercio. Estos valores faltantes podrían deberse a problemas en la geolocalización de las transacciones, la falta de información en los datos originales o que simplemente las transacciones no se hayan hecho dentro de los Estados Unidos.
@@ -501,13 +502,11 @@ unique_countries <- missing_zip_data %>%
   select(merchant_state) %>%
   distinct()
 
-unique_countries
-
-length(unique_countries$merchant_state)
+paste("Paises encontrados: ",length(unique_countries$merchant_state))
 
 ```
 
-Hay 63 países donde se realizaron transacciones que no son USA. 
+Hay transacciones en 63 países fuera de Estados Unidos. 
 
 ## Proporción de Transacciones Fraudulentas
 
@@ -534,7 +533,7 @@ Existen muy pocas transacciones fraudulentas en el dataset, lo que puede dificul
 
 Se analiza la distribución de los montos de transacciones para identificar posibles patrones o anomalías.
 
-```{r plot_amount_distribution}
+```{r plot_amount_distribution, echo=FALSE}
 
 # Generar una columna de monto en logaritmo
 transactions_data$log_amount <- log(transactions_data$amount)
@@ -545,9 +544,11 @@ ggplot(transactions_data, aes(x = amount)) +
   scale_x_log10() +
   labs(title = "Distribución de Montos de Transacciones",
        x = "Monto de Transacción",
-       y = "Frecuencia")
+       y = "Frecuencia") +
+  theme_minimal()
 
 ```
+
 ## Distribución de Edades de Clientes
 
 Se analiza la distribución de las edades de los clientes para identificar posibles patrones o anomalías.
@@ -556,10 +557,11 @@ Se analiza la distribución de las edades de los clientes para identificar posib
 
 # Generar un histograma de edades
 ggplot(transactions_data, aes(x = ud_birth_year)) +
-  geom_histogram(fill = "lightgreen", color = "darkgreen", bins = 50) +
+  geom_histogram(fill = "skyblue", color = "darkblue", bins = 50) +
   labs(title = "Distribución de Edades de Clientes",
        x = "Año de Nacimiento",
-       y = "Frecuencia")
+       y = "Frecuencia") +
+  theme_minimal()
 
 ```
 
@@ -589,10 +591,11 @@ ggplot(transactions_clean, aes(x = merchant_state, y = amount)) +
        y = "Monto de Transacción") +
   scale_x_discrete(labels = function(x) {
     ifelse(seq_along(x) %% 2 == 0, paste0("\n", x), x)
-  })
-
+  }) +
+  theme_minimal()
 
 ```
+
 Como se puede observar, la distribución de montos de transacciones varía entre los diferentes estados, lo que podría indicar diferencias en los hábitos de consumo o en la actividad económica.
 
 ## Distribución de cantidad y monto de transacciones por mes del año
@@ -615,7 +618,8 @@ ggplot(transactions_by_month, aes(x = factor(month), y = total_transactions)) +
   geom_bar(stat = "identity", fill = "skyblue", color = "darkblue") +
   labs(title = "Cantidad de Transacciones por Mes del Año",
        x = "Mes",
-       y = "Cantidad de Transacciones")
+       y = "Cantidad de Transacciones") +
+  theme_minimal()
 
 ```
 
@@ -636,7 +640,8 @@ ggplot(total_amount_by_month, aes(x = factor(month), y = total_amount)) +
   geom_bar(stat = "identity", fill = "skyblue", color = "darkblue") +
   labs(title = "Monto Total de Transacciones por Mes del Año",
        x = "Mes",
-       y = "Monto Total de Transacciones")
+       y = "Monto Total de Transacciones") +
+  theme_minimal()
 
 ```
 
@@ -648,7 +653,7 @@ Se analiza la correlación entre las variables numéricas del dataset para ident
 
 Por ser un dataset con muchas variables, se utiliza una matriz de correlación para visualizar las relaciones entre las variables numéricas. En primer lugar sólo para las variables numéricas de datos de demograficos (transacciones y georreferencias) y luego para datos financieros de usuarios (transacciones y usuarios)
 
-```{r plot_correlation}
+```{r plot_correlation_st}
 
 # Seleccionar las columnas numéricas de los datos de transacciones y los que 
 # comienzan con st_ además de las 7 primeras columnas del dataset 
@@ -673,14 +678,15 @@ correlation_matrix_st
 
 ```
 
-```{r plot_correlation_matrix}
+
+```{r plot_correlation_matrix_st}
 # Generar un gráfico de la matriz de correlación
 corrplot::corrplot(correlation_matrix_st, method = "color", type = "upper", tl.cex = 0.7)
 
 ```
 
 
-```{r plot_correlation_2}
+```{r plot_correlation_st_age}
 
 # Seleccionar las columnas numéricas de los datos de transacciones y los que 
 # comienzan con st_age además de las 7 primeras columnas del dataset 
@@ -699,7 +705,8 @@ correlation_matrix_st_age <- cor(demo_data_st_age, use = "pairwise.complete.obs"
 correlation_matrix_st_age
 ```
 
-```{r plot_correlation_matrix_2}
+
+```{r plot_correlation_matrix_st_age}
 # Generar un gráfico de la matriz de correlación
 corrplot::corrplot(correlation_matrix_st_age, method = "color", type = "upper", tl.cex = 0.7)
 
@@ -733,6 +740,7 @@ correlation_matrix_ud
 # Generar un gráfico de la matriz de correlación
 corrplot::corrplot(correlation_matrix_ud, method = "color", type = "upper", tl.cex = 0.7)
 ```
+
 Pueden observarse correlaciones entre las variables financieras de los usuarios, lo que podría indicar relaciones entre ellas. Por ejemplo, la deuda total y el ingreso per cápita podrían estar correlacionados, lo que podría indicar que los usuarios con mayores ingresos tienen una deuda total más alta. También se observa una correlación negativa entre la edad y el número de tarjetas, lo que podría indicar que los usuarios más jóvenes tienen más tarjetas.  
 
 # Analisis de Regresión
@@ -758,17 +766,19 @@ summary(model_income)
 
 ```
 
+
 ```{r linear_regression_univariate_income_plot}  
 # Diagrama de dispersión
 # con recta de regresión en color rojo
 ggplot(transactions_data, aes(x = ud_per_capita_income, y = amount)) +
-  geom_point(color = "skyblue") +
+  geom_point(color = "darkgrey") +
   geom_smooth(method = "lm", color = "red") +
   labs(title = "Ingreso Per Cápita vs Monto de la Transacción",
        x = "Ingreso Per Cápita",
        y = "Monto de la Transacción") + 
   theme_minimal()
 ```
+
 
 ```{r linear_regression_univariate_debt}
 
@@ -779,11 +789,12 @@ summary(model_debt)
 
 ```
 
+
 ```{r linear_regression_univariate_debt_plot}
 # Diagrama de dispersión
 # con recta de regresión en color rojo
 ggplot(transactions_data, aes(x = ud_total_debt, y = amount)) +
-  geom_point(color = "skyblue") +
+  geom_point(color = "darkgrey") +
   geom_smooth(method = "lm", color = "red") +
   labs(title = "Deuda Total vs Monto de la Transacción",
        x = "Deuda Total",
